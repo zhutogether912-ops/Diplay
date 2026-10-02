@@ -3,8 +3,8 @@ name: Import DiPlay upstream
 on:
   workflow_dispatch:
   push:
-    paths:
-      - ".github/workflows/import-upstream.yml"
+    branches:
+      - main
 
 permissions:
   contents: write
