@@ -27,10 +27,8 @@ jobs:
 
           rsync -a --delete \
             --exclude=".git/" \
-            --exclude=".github/workflows/import-upstream.yml" \
+            --exclude=".github/workflows/" \
             "$tmpdir/upstream/" ./
-
-          rm -f .github/workflows/import-upstream.yml
 
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
