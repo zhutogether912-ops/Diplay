@@ -1,0 +1,45 @@
+name: Import DiPlay upstream
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/import-upstream.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout destination repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Import upstream DiPlay source
+        shell: bash
+        run: |
+          set -euo pipefail
+          tmpdir="$(mktemp -d)"
+          git clone --depth 1 https://github.com/shihabal3amri/DiPlay.git "$tmpdir/upstream"
+
+          rsync -a --delete \
+            --exclude=".git/" \
+            --exclude=".github/workflows/import-upstream.yml" \
+            "$tmpdir/upstream/" ./
+
+          rm -f .github/workflows/import-upstream.yml
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+
+          if git diff --cached --quiet; then
+            echo "Destination already matches upstream."
+            exit 0
+          fi
+
+          git commit -m "Import DiPlay upstream source snapshot"
+          git push origin HEAD:main
